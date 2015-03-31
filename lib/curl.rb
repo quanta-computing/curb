@@ -1,12 +1,12 @@
-require 'curb_core'
-require 'curl/easy'
-require 'curl/multi'
+require_relative '../ext/curb_core'
+require_relative 'curl/easy'
+require_relative 'curl/multi'
 require 'uri'
 require 'cgi'
 
 # expose shortcut methods
 module Curl
-  
+
   def self.http(verb, url, post_body=nil, put_data=nil, &block)
     handle = Thread.current[:curb_curl] ||= Curl::Easy.new
     handle.reset

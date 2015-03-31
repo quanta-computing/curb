@@ -30,7 +30,7 @@ VALUE cCurlEasy;
 
 static VALUE callback_exception(VALUE unused) {
   return Qfalse;
-} 
+}
 
 /* These handle both body and header data */
 static size_t default_data_handler(char *stream,
@@ -356,7 +356,7 @@ static VALUE ruby_curl_easy_clone(VALUE self) {
  *   easy.close                                      => nil
  *
  * Close the Curl::Easy instance. Any open connections are closed
- * The easy handle is reinitialized.  If a previous multi handle was 
+ * The easy handle is reinitialized.  If a previous multi handle was
  * open it is set to nil and will be cleared after a GC.
  */
 static VALUE ruby_curl_easy_close(VALUE self) {
@@ -491,7 +491,7 @@ static VALUE ruby_curl_easy_headers_get(VALUE self) {
   ruby_curl_easy *rbce;
   VALUE headers;
   Data_Get_Struct(self, ruby_curl_easy, rbce);
-  headers = rb_easy_get("headers");//rb_hash_aref(rbce->opts, rb_intern("headers")); 
+  headers = rb_easy_get("headers");//rb_hash_aref(rbce->opts, rb_intern("headers"));
   if (headers == Qnil) { headers = rb_easy_set("headers", rb_hash_new()); }
   return headers;
 }
@@ -703,29 +703,29 @@ static VALUE ruby_curl_easy_useragent_get(VALUE self) {
 /*
  * call-seq:
  *   easy.post_body = "some=form%20data&to=send"      => string or nil
- * 
+ *
  * Sets the POST body of this Curl::Easy instance.  This is expected to be
  * URL encoded; no additional processing or encoding is done on the string.
  * The content-type header will be set to application/x-www-form-urlencoded.
- * 
+ *
  * This is handy if you want to perform a POST against a Curl::Multi instance.
  */
 static VALUE ruby_curl_easy_post_body_set(VALUE self, VALUE post_body) {
   ruby_curl_easy *rbce;
   CURL *curl;
-  
+
   char *data;
   long len;
 
   Data_Get_Struct(self, ruby_curl_easy, rbce);
-  
+
   curl = rbce->curl;
-  
+
   if ( post_body == Qnil ) {
     rb_easy_del("postdata_buffer");
     curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
-    
-  } else {  
+
+  } else {
     if (rb_type(post_body) == T_STRING) {
       data = StringValuePtr(post_body);
       len = RSTRING_LEN(post_body);
@@ -738,19 +738,19 @@ static VALUE ruby_curl_easy_post_body_set(VALUE self, VALUE post_body) {
     else {
       rb_raise(rb_eRuntimeError, "post data must respond_to .to_s");
     }
-  
-    // Store the string, since it has to hang around for the duration of the 
+
+    // Store the string, since it has to hang around for the duration of the
     // request.  See CURLOPT_POSTFIELDS in the libcurl docs.
     //rbce->postdata_buffer = post_body;
     rb_easy_set("postdata_buffer", post_body);
-  
+
     curl_easy_setopt(curl, CURLOPT_POST, 1);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, len);
-    
+
     return post_body;
   }
-  
+
   return Qnil;
 }
 
@@ -767,7 +767,7 @@ static VALUE ruby_curl_easy_post_body_get(VALUE self) {
 /*
  * call-seq:
  *   easy.put_data = data                             => ""
- * 
+ *
  * Points this Curl::Easy instance to data to be uploaded via PUT.  This
  * sets the request to a PUT type request - useful if you want to PUT via
  * a multi handle.
@@ -799,7 +799,7 @@ static VALUE ruby_curl_easy_put_data_set(VALUE self, VALUE data) {
   curl_easy_setopt(curl, CURLOPT_SEEKDATA, rbce);
 #endif
 
-  /* 
+  /*
    * we need to set specific headers for the PUT to work... so
    * convert the internal headers structure to a HASH if one is set
    */
@@ -813,7 +813,7 @@ static VALUE ruby_curl_easy_put_data_set(VALUE self, VALUE data) {
   if (NIL_P(data)) { return data; }
 
   headers = rb_easy_get("headers");
-  if( headers == Qnil ) { 
+  if( headers == Qnil ) {
     headers = rb_hash_new();
   }
 
@@ -978,7 +978,7 @@ static VALUE ruby_curl_easy_proxy_type_get(VALUE self) {
   (!strncmp("ntlm",node,4)) ? CURLAUTH_NTLM : \
   (!strncmp("any",node,3)) ? CURLAUTH_ANY : \
   (!strncmp("anysafe",node,7)) ? CURLAUTH_ANYSAFE : 0
-#else 
+#else
 #define CURL_HTTPAUTH_STR_TO_NUM(node) \
   (!strncmp("basic",node,5)) ? CURLAUTH_BASIC : \
   (!strncmp("digest",node,6)) ? CURLAUTH_DIGEST : \
@@ -1009,7 +1009,7 @@ static VALUE ruby_curl_easy_http_auth_types_set(int argc, VALUE *argv, VALUE sel
   len = (int)RARRAY_LEN(args_ary);
 
   if (len == 1 && (TYPE(rb_ary_entry(args_ary,0)) == T_FIXNUM || rb_ary_entry(args_ary,0) == Qnil)) {
-    if (rb_ary_entry(args_ary,0) == Qnil) { 
+    if (rb_ary_entry(args_ary,0) == Qnil) {
       rbce->http_auth_types = 0;
     }
     else {
@@ -1254,7 +1254,7 @@ static VALUE ruby_curl_easy_username_set(VALUE self, VALUE username) {
 /*
  * call-seq:
  *   easy.username                                    => string
- * 
+ *
  * Get the current username
  */
 static VALUE ruby_curl_easy_username_get(VALUE self, VALUE username) {
@@ -1282,7 +1282,7 @@ static VALUE ruby_curl_easy_password_set(VALUE self, VALUE password) {
 /*
  * call-seq:
  *   easy.password                                    => string
- * 
+ *
  * Get the current password
  */
 static VALUE ruby_curl_easy_password_get(VALUE self, VALUE password) {
@@ -1318,7 +1318,7 @@ static VALUE ruby_curl_easy_ssl_version_get(VALUE self, VALUE ssl_version) {
 /*
  * call-seq:
  *   easy.use_ssl = value                             => fixnum or nil
- * 
+ *
  * Ensure libcurl uses SSL for FTP connections. Valid options are Curl::CURL_USESSL_NONE,
  * Curl::CURL_USESSL_TRY, Curl::CURL_USESSL_CONTROL, and Curl::CURL_USESSL_ALL.
  */
@@ -1775,7 +1775,7 @@ static VALUE ruby_curl_easy_on_failure_set(int argc, VALUE *argv, VALUE self) {
  *  To remove a previously-supplied handler, call this method with no attached
  *  block.
  *
- *  The +on_missing+ handler is called when request is finished with a 
+ *  The +on_missing+ handler is called when request is finished with a
  *  status of 40x
  */
 static VALUE ruby_curl_easy_on_missing_set(int argc, VALUE *argv, VALUE self) {
@@ -1790,7 +1790,7 @@ static VALUE ruby_curl_easy_on_missing_set(int argc, VALUE *argv, VALUE self) {
  *  To remove a previously-supplied handler, call this method with no attached
  *  block.
  *
- *  The +on_redirect+ handler is called when request is finished with a 
+ *  The +on_redirect+ handler is called when request is finished with a
  *  status of 30x
  */
 static VALUE ruby_curl_easy_on_redirect_set(int argc, VALUE *argv, VALUE self) {
@@ -2178,7 +2178,7 @@ VALUE ruby_curl_easy_setup(ruby_curl_easy *rbce) {
     rb_warn("libcurl is not configured with SSL support");
   }
 #endif
-  
+
   if (rbce->ftp_filemethod > 0) {
     curl_easy_setopt(curl, CURLOPT_FTP_FILEMETHOD, rbce->ftp_filemethod);
   }
@@ -2495,7 +2495,7 @@ static VALUE ruby_curl_easy_response_code_get(VALUE self) {
 static VALUE ruby_curl_easy_primary_ip_get(VALUE self) {
   ruby_curl_easy *rbce;
   char* ip;
-  
+
   Data_Get_Struct(self, ruby_curl_easy, rbce);
   curl_easy_getinfo(rbce->curl, CURLINFO_PRIMARY_IP, &ip);
 
@@ -2720,7 +2720,7 @@ static VALUE ruby_curl_easy_redirect_count_get(VALUE self) {
  * call-seq:
  *   easy.redirect_url                               => "http://some.url" or nil
  *
- * Retrieve  the URL a redirect would take you to if you 
+ * Retrieve  the URL a redirect would take you to if you
  * would enable CURLOPT_FOLLOWLOCATION.
  *
  * Requires libcurl 7.18.2 or higher, otherwise -1 is always returned.
@@ -3085,6 +3085,7 @@ static VALUE ruby_curl_easy_last_result(VALUE self) {
  * Iniital access to libcurl curl_easy_setopt
  */
 static VALUE ruby_curl_easy_set_opt(VALUE self, VALUE opt, VALUE val) {
+
   ruby_curl_easy *rbce;
   long option = FIX2LONG(opt);
 
@@ -3095,6 +3096,12 @@ static VALUE ruby_curl_easy_set_opt(VALUE self, VALUE opt, VALUE val) {
   case CURLOPT_VERBOSE: {
     VALUE verbose = val;
     CURB_BOOLEAN_SETTER(ruby_curl_easy, verbose);
+    } break;
+  case CURLOPT_POST: {
+    curl_easy_setopt(rbce->curl, CURLOPT_POST, rb_type(val) == T_TRUE);
+    } break;
+  case CURLOPT_POSTFIELDS: {
+    curl_easy_setopt(rbce->curl, CURLOPT_POSTFIELDS, NIL_P(val) ? NULL : StringValueCStr(val));
     } break;
   case CURLOPT_FOLLOWLOCATION: {
     VALUE follow_location = val;
@@ -3125,12 +3132,6 @@ static VALUE ruby_curl_easy_set_opt(VALUE self, VALUE opt, VALUE val) {
   case CURLOPT_NOPROGRESS:
   case CURLOPT_NOSIGNAL:
   case CURLOPT_HTTPGET:
-  case CURLOPT_POST: {
-    curl_easy_setopt(rbce->curl, CURLOPT_POST, rb_type(val) == T_TRUE);
-  } break;
-  case CURLOPT_POSTFIELDS: {
-    curl_easy_setopt(rbce->curl, CURLOPT_POSTFIELDS, NIL_P(val) ? NULL : StringValueCStr(val));
-  } break;
   case CURLOPT_NOBODY: {
     int type = rb_type(val);
     VALUE value;

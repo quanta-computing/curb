@@ -1,1 +1,1 @@
-require 'curl'
+require_relative 'curl'
