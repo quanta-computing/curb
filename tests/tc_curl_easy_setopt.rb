@@ -28,4 +28,11 @@ class TestCurbCurlEasySetOpt < Test::Unit::TestCase
     assert_equal url, @easy.url
   end
 
+  def test_opt_max_recv_speed_large
+    @easy.set :max_recv_speed_large, 42
+  end
+
+  def test_opt_max_send_speed_large
+    @easy.set :max_send_speed_large, 42
+  end
 end
