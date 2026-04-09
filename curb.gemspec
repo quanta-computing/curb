@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
   s.extensions << 'ext/extconf.rb'
 
   #### Documentation and testing.
-  s.has_rdoc = true
   s.homepage = 'https://github.com/taf2/curb'
   s.rdoc_options = ['--main', 'README']
 
